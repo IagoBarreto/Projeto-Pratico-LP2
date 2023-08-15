@@ -268,7 +268,7 @@ public class ProjetoPratico {
                                         if (listaInscritos.getParticipante(num).getFaixaEtaria().equalsIgnoreCase("Menor de idade")) {
                                             numMenoresOficina++;
                                         }
-                                        if (listaInscritos.getParticipante(num).getFaixaEtaria().equalsIgnoreCase("Maiores de idade")) {
+                                        if (listaInscritos.getParticipante(num).getFaixaEtaria().equalsIgnoreCase("Maior de idade")) {
                                             numMaioresOficina++;
                                         }
                                     }
@@ -301,6 +301,8 @@ public class ProjetoPratico {
             }
 
         } while (opc != 6);
+
+        teclado.close();
 
     }
 
