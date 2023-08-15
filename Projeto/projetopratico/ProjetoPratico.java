@@ -8,27 +8,26 @@ public class ProjetoPratico {
 
     public static void main(String[] args) {
 
-        //Criação da lista das oficinas existentes
+        // Criação da lista das oficinas existentes
         OficinasPossiveis oficinasExistentes = new OficinasPossiveis();
 
-        //Instaciação da lista de participantes
+        // Instaciação da lista de participantes
         ListaInscritos listaInscritos = new ListaInscritos();
 
-        //Instanciação de Scanner para entrada de dados pelo usuario
+        // Instanciação de Scanner para entrada de dados pelo usuario
         Scanner teclado = new Scanner(System.in);
 
-        //Declaração de variavel para ser utlizado no switch
+        // Declaração de variavel para ser utlizado no switch
         int opc;
 
-        //Declaração de variavel para saber posição em que participante ira ser cadastrado
+        // Declaração de variavel para saber posição em que participante ira ser
+        // cadastrado
         int numParticipante = 0;
 
-        //Laço de repetição para programa só ser encerrado caso usuario deseje
+        // Laço de repetição para programa só ser encerrado caso usuario deseje
         do {
-            
-            
 
-            //Apresentação de Menu
+            // Apresentação de Menu
             System.out.println("------------------- Inscrições -------------------");
             System.out.println("[1] Inscrever novo participante");
             System.out.println("[2] Consultar quantidade de vagas das oficinas");
@@ -39,17 +38,17 @@ public class ProjetoPratico {
             System.out.println("---------------------------------------------------");
             System.out.print("Escolha uma das opções: ");
 
-            //Leitura da entrada do usuario para escolha do menu
+            // Leitura da entrada do usuario para escolha do menu
             opc = teclado.nextInt();
             teclado.nextLine();
             System.out.println();
 
             switch (opc) {
 
-                //Inscrever novo participante
+                // Inscrever novo participante
                 case 1:
 
-                    //Declaração de variaveis para receber os atributos
+                    // Declaração de variaveis para receber os atributos
                     String nome;
                     String cpf;
                     String sexo;
@@ -58,7 +57,7 @@ public class ProjetoPratico {
                     int ano;
                     int finalizado = 0;
 
-                    //Loop de repetição para entrada 
+                    // Loop de repetição para entrada
                     do {
                         System.out.println("Informe os dados do participante");
 
@@ -66,13 +65,32 @@ public class ProjetoPratico {
 
                         nome = teclado.nextLine();
 
-                        System.out.print("CPF: ");
+                        do {
+                            System.out.print("CPF: ");
 
-                        cpf = teclado.next();
+                            cpf = teclado.next();
 
-                        System.out.print("Sexo (Masculino/Feminino): ");
+                            if (listaInscritos.isCadastrado(cpf)) {
+                                System.out.println("Participante com este CPF já cadastrado");
+                            }
 
-                        sexo = teclado.next();
+                        } while (listaInscritos.isCadastrado(cpf));
+                         
+                        boolean contSex;
+
+                        do {
+
+                            contSex = true;
+
+                            System.out.print("Sexo (Masculino/Feminino): ");
+
+                            sexo = teclado.next();
+
+                            if (!(sexo.equalsIgnoreCase("masculino")||sexo.equalsIgnoreCase("feminino"))) {
+                                System.out.println("Escreva uma opção valida: Masculino ou Feminino");
+                                contSex = false;
+                            }
+                        } while (contSex == false);
 
                         System.out.print("Dia de nascimento(1-31): ");
 
@@ -86,68 +104,64 @@ public class ProjetoPratico {
 
                         ano = teclado.nextInt();
 
-                        if (listaInscritos.isCadastrado(cpf)) {
-                            System.out.println("Participante com este CPF já cadastrado");
-                        } else {
+                        LocalDate nascimento = LocalDate.of(ano, mes, dia);
+                        listaInscritos.adicionar(new Participante(nome, cpf, sexo, nascimento));
+                        String selecionarNovamente;
 
-                            LocalDate nascimento = LocalDate.of(ano, mes, dia);
-                            listaInscritos.adicionar(new Participante(nome, cpf, sexo, nascimento));
-                            String selecionarNovamente;
+                        int vezesInscrito = 0;
+                        int opcOficina;
 
-                            int vezesInscrito = 0;
-                            int opcOficina;
+                        do {
 
-                            do {
+                            System.out.println("\nEscolha uma oficina em que deseja inscrever o participante");
 
-                                System.out.println("\nEscolha uma oficina em que deseja inscrever o participante");
-                                
-                                ArrayList<String> combo = new ArrayList<>();
+                            ArrayList<String> combo = new ArrayList<>();
 
-                                for (int i = 1; i <= oficinasExistentes.getNumerosOficinas(); i++) {
-                                    combo.add("[" + i + "] " + oficinasExistentes.getOficina((i - 1)).getNome());
-                                }
-                                
-                                System.out.println(combo);
+                            for (int i = 1; i <= oficinasExistentes.getNumerosOficinas(); i++) {
+                                combo.add("[" + i + "] " + oficinasExistentes.getOficina((i - 1)).getNome());
+                            }
 
-                                System.out.print("Escolher opção: ");
+                            System.out.println(combo);
 
-                                opcOficina = teclado.nextInt();
+                            System.out.print("Escolher opção: ");
 
-                                if ((opcOficina - 1) <= oficinasExistentes.getNumerosOficinas()) {
-                                    if (!listaInscritos.getParticipante(numParticipante).oficinaJaCadastrada(oficinasExistentes.getOficina((opcOficina - 1)))) {
-                                        if (!listaInscritos.getParticipante(numParticipante).inscreverOficina(oficinasExistentes.getOficina((opcOficina - 1)))) {
-                                            System.out.println("Oficina já esta cheia");
-                                            vezesInscrito--;
-                                        } else {
+                            opcOficina = teclado.nextInt();
 
-                                        }
-                                    } else {
-                                        System.out.println("Usuário ja cadastrado nessa oficina");
+                            if ((opcOficina - 1) <= oficinasExistentes.getNumerosOficinas()) {
+                                if (!listaInscritos.getParticipante(numParticipante)
+                                        .oficinaJaCadastrada(oficinasExistentes.getOficina((opcOficina - 1)))) {
+                                    if (!listaInscritos.getParticipante(numParticipante)
+                                            .inscreverOficina(oficinasExistentes.getOficina((opcOficina - 1)))) {
+                                        System.out.println("Oficina já esta cheia");
                                         vezesInscrito--;
-                                    }
+                                    } else {
 
+                                    }
                                 } else {
-                                    System.out.println("Escolha um opção valida");
+                                    System.out.println("Usuário ja cadastrado nessa oficina");
                                     vezesInscrito--;
                                 }
 
-                                if (vezesInscrito < 2 && vezesInscrito >= 0) {
-                                    System.out.println("Desejar inscrever o usuário em outra oficina? (s/n)");
-                                    selecionarNovamente = teclado.next();
-                                } else if (vezesInscrito < 0) {
-                                    selecionarNovamente = "s";
-                                } else {
-                                    selecionarNovamente = "n";
+                            } else {
+                                System.out.println("Escolha um opção valida");
+                                vezesInscrito--;
+                            }
 
-                                }
+                            if (vezesInscrito < 2 && vezesInscrito >= 0) {
+                                System.out.println("Desejar inscrever o usuário em outra oficina? (s/n)");
+                                selecionarNovamente = teclado.next();
+                            } else if (vezesInscrito < 0) {
+                                selecionarNovamente = "s";
+                            } else {
+                                selecionarNovamente = "n";
 
-                                vezesInscrito++;
+                            }
 
-                            } while (selecionarNovamente.equalsIgnoreCase("s"));
+                            vezesInscrito++;
 
-                            System.out.println("\nO Participante foi cadastrado com sucesso!\n");
+                        } while (selecionarNovamente.equalsIgnoreCase("s"));
 
-                        }
+                        System.out.println("\nO Participante foi cadastrado com sucesso!\n");
 
                         finalizado = 1;
 
@@ -156,7 +170,7 @@ public class ProjetoPratico {
 
                     break;
 
-                //Consultar quantidade de vagas das oficinas    
+                // Consultar quantidade de vagas das oficinas
                 case 2:
                     System.out.println("-------------- Vagas disponiveis em cada oficina --------------");
                     for (int i = 0; i < oficinasExistentes.getNumerosOficinas(); i++) {
@@ -167,7 +181,7 @@ public class ProjetoPratico {
 
                     break;
 
-                //Consultar nome de menores de idade inscritos em uma oficina    
+                // Consultar nome de menores de idade inscritos em uma oficina
                 case 3:
 
                     System.out.println("-------------- Escolha uma das oficinas --------------");
@@ -183,21 +197,23 @@ public class ProjetoPratico {
                     if ((opcOficina - 1) <= oficinasExistentes.getNumerosOficinas()) {
 
                         boolean contemMenor = false;
-                        
+
                         System.out.println("------------------------------------------------------");
                         System.out.println("Lista de participantes menores de idade nessa oficina:");
 
                         for (int num = 0; num < listaInscritos.tamanho(); num++) {
 
-                            if (listaInscritos.getParticipante(num).getOficinasCadastradas().contains(oficinasExistentes.getOficina(opcOficina - 1))) {
-                                if (listaInscritos.getParticipante(num).getFaixaEtaria().equalsIgnoreCase("Menor de idade")) {
+                            if (listaInscritos.getParticipante(num).getOficinasCadastradas()
+                                    .contains(oficinasExistentes.getOficina(opcOficina - 1))) {
+                                if (listaInscritos.getParticipante(num).getFaixaEtaria()
+                                        .equalsIgnoreCase("Menor de idade")) {
                                     System.out.println(listaInscritos.getParticipante(num).getNome());
                                     contemMenor = true;
                                 }
                             }
 
                         }
-                        
+
                         if (!contemMenor) {
                             System.out.println("Essa oficina não tem nenhum participante menor de idade");
                         }
@@ -210,7 +226,7 @@ public class ProjetoPratico {
 
                     break;
 
-                //Consultar inscrição a partir de CPF   
+                // Consultar inscrição a partir de CPF
                 case 4:
 
                     System.out.println("---------------- Buscar Participante ----------------");
@@ -237,7 +253,7 @@ public class ProjetoPratico {
 
                     break;
 
-                //Consultar estatísticas das inscrições    
+                // Consultar estatísticas das inscrições
                 case 5:
 
                     if (listaInscritos.tamanho() == 0) {
@@ -265,10 +281,12 @@ public class ProjetoPratico {
 
                                 for (int num = 0; num < listaInscritos.tamanho(); num++) {
                                     if (listaInscritos.getParticipante(num).getOficinasCadastradas().contains(cont)) {
-                                        if (listaInscritos.getParticipante(num).getFaixaEtaria().equalsIgnoreCase("Menor de idade")) {
+                                        if (listaInscritos.getParticipante(num).getFaixaEtaria()
+                                                .equalsIgnoreCase("Menor de idade")) {
                                             numMenoresOficina++;
                                         }
-                                        if (listaInscritos.getParticipante(num).getFaixaEtaria().equalsIgnoreCase("Maior de idade")) {
+                                        if (listaInscritos.getParticipante(num).getFaixaEtaria()
+                                                .equalsIgnoreCase("Maior de idade")) {
                                             numMaioresOficina++;
                                         }
                                     }
@@ -304,6 +322,10 @@ public class ProjetoPratico {
 
         teclado.close();
 
+    }
+
+    private static String equalsIgnoreCase(String string) {
+        return null;
     }
 
 }
