@@ -1,5 +1,6 @@
 package projetopratico;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -75,7 +76,7 @@ public class ProjetoPratico {
                             }
 
                         } while (listaInscritos.isCadastrado(cpf));
-                         
+
                         boolean contSex;
 
                         do {
@@ -86,26 +87,47 @@ public class ProjetoPratico {
 
                             sexo = teclado.next();
 
-                            if (!(sexo.equalsIgnoreCase("masculino")||sexo.equalsIgnoreCase("feminino"))) {
+                            if (!(sexo.equalsIgnoreCase("masculino") || sexo.equalsIgnoreCase("feminino"))) {
                                 System.out.println("Escreva uma opção valida: Masculino ou Feminino");
                                 contSex = false;
                             }
                         } while (contSex == false);
 
-                        System.out.print("Dia de nascimento(1-31): ");
+                        boolean contVal;
 
-                        dia = teclado.nextInt();
+                        do {
 
-                        System.out.print("Mês de nascimento: ");
+                            contVal = true;
+                            try {
 
-                        mes = teclado.nextInt();
+                                System.out.print("Dia de nascimento(1-31): ");
 
-                        System.out.print("Ano de nascimento: ");
+                                dia = teclado.nextInt();
 
-                        ano = teclado.nextInt();
+                                System.out.print("Mês de nascimento: ");
 
-                        LocalDate nascimento = LocalDate.of(ano, mes, dia);
-                        listaInscritos.adicionar(new Participante(nome, cpf, sexo, nascimento));
+                                mes = teclado.nextInt();
+
+                                System.out.print("Ano de nascimento: ");
+
+                                ano = teclado.nextInt();
+
+                                LocalDate nascimento = LocalDate.of(ano, mes, dia);
+
+                                if (nascimento.isAfter(LocalDate.now())) {
+                                    System.out.println("A data digitada é invalida,  \n");
+                                    contVal = false;
+                                } else {
+                                    listaInscritos.adicionar(new Participante(nome, cpf, sexo, nascimento));
+                                }
+
+                            } catch (DateTimeException e) {
+                                System.out.println("A data digitada é invalida, digite uma data valida \n");
+                                contVal = false;
+                            }
+
+                        } while (contVal == false);
+
                         String selecionarNovamente;
 
                         int vezesInscrito = 0;
@@ -113,7 +135,7 @@ public class ProjetoPratico {
 
                         do {
 
-                            System.out.println("\nEscolha uma oficina em que deseja inscrever o participante");
+                            System.out.println("\nEscolha uma oficina em que deseja inscrever o participante:");
 
                             ArrayList<String> combo = new ArrayList<>();
 
@@ -148,8 +170,16 @@ public class ProjetoPratico {
                             }
 
                             if (vezesInscrito < 2 && vezesInscrito >= 0) {
+                                do{
                                 System.out.println("Desejar inscrever o usuário em outra oficina? (s/n)");
                                 selecionarNovamente = teclado.next();
+                                if (!(selecionarNovamente.equalsIgnoreCase("s")
+                                        || selecionarNovamente.equalsIgnoreCase("n"))) {
+                                    System.out.println("Digite uma opção valida: s ou n ");
+                                    
+                                }
+                            } while (!(selecionarNovamente.equalsIgnoreCase("s")
+                                        || selecionarNovamente.equalsIgnoreCase("n")));
                             } else if (vezesInscrito < 0) {
                                 selecionarNovamente = "s";
                             } else {
@@ -159,7 +189,7 @@ public class ProjetoPratico {
 
                             vezesInscrito++;
 
-                        } while (selecionarNovamente.equalsIgnoreCase("s"));
+                        } while (!selecionarNovamente.equalsIgnoreCase("n"));
 
                         System.out.println("\nO Participante foi cadastrado com sucesso!\n");
 
@@ -194,7 +224,8 @@ public class ProjetoPratico {
 
                     int opcOficina = teclado.nextInt();
 
-                    if ((opcOficina - 1) <= oficinasExistentes.getNumerosOficinas()) {
+                    if (((opcOficina - 1) < oficinasExistentes.getNumerosOficinas()) 
+                        && (opcOficina > 0)) {
 
                         boolean contemMenor = false;
 
@@ -221,7 +252,7 @@ public class ProjetoPratico {
                         System.out.println("------------------------------------------------------\n");
 
                     } else {
-                        System.out.println("Digite uma opção válida");
+                        System.out.println("A opção escolhida não é válida!\n");
                     }
 
                     break;
